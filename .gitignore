@@ -1,0 +1,8 @@
+#Compiled classes
+*.class
+
+#IDE
+# intellij IDEA
+*.iml
+.idea/*
+target/*
