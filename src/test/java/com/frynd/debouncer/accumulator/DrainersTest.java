@@ -31,10 +31,10 @@ class DrainersTest {
     }
 
     @Test
-    @DisplayName("forEach drainer should drain each item.")
-    void forEach() {
+    @DisplayName("Iterable drainer should drain each item.")
+    void drainIterable() {
         AtomicInteger count = new AtomicInteger(0);
-        Consumer<Collection<String>> drainer = Drainers.drainForEach(str -> count.incrementAndGet());
+        Consumer<Collection<String>> drainer = Drainers.drainIterable(str -> count.incrementAndGet());
         List<String> strings = Arrays.asList("a", "b", "c", "d");
 
         drainer.accept(strings);
@@ -46,9 +46,9 @@ class DrainersTest {
         Assertions.assertEquals(strings.size(), count.get(), "count should be incremented for each value.");
 
         Assertions.assertThrows(NullPointerException.class, () -> {
-            Consumer<Iterable<Object>> shouldNotBeMade = Drainers.drainForEach(null);
+            Consumer<Iterable<Object>> shouldNotBeMade = Drainers.drainIterable(null);
             Assertions.fail("Drainer should not be made with null, but did: " + shouldNotBeMade);
-        }, "Should not be able to create a null forEach.");
+        }, "Should not be able to create a null Iterable drainer.");
     }
 
     @Test
