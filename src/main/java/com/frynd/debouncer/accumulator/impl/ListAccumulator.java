@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  * <strong>Note:</strong> This implementation is not synchronized.
  *
  * @param <T> The type of item accumulated.
- * @see Drainers#drainForEach(Consumer)
+ * @see Drainers#drainIterable(Consumer)
  */
 public class ListAccumulator<T> implements Accumulator<T, List<T>> {
     private final ArrayList<T> list = new ArrayList<>();
@@ -43,7 +43,7 @@ public class ListAccumulator<T> implements Accumulator<T, List<T>> {
      *
      * @param consumer the consumer to pass the currently accumulated values to
      * @throws NullPointerException if {@code consumer} is null
-     * @see Drainers#drainForEach(Consumer)
+     * @see Drainers#drainIterable(Consumer)
      */
     @Override
     public void drain(Consumer<? super List<T>> consumer) {

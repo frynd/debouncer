@@ -42,7 +42,7 @@ public class Drainers {
      * @return a consumer that iterates over an iterable and applies {@code action} to each item
      * @throws NullPointerException if {@code action} is null
      */
-    public static <R, I extends Iterable<R>> Consumer<I> drainForEach(Consumer<? super R> action) {
+    public static <R, I extends Iterable<R>> Consumer<I> drainIterable(Consumer<? super R> action) {
         Objects.requireNonNull(action);
         return col -> col.forEach(action);
     }

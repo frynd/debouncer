@@ -6,7 +6,7 @@ import java.util.function.Consumer;
  * Accumulator interface.
  * Accumulates values that may later be consumed.
  *
- * @param <V> value types to be accumulated.
+ * @param <V> value types to be accumulated
  * @param <R> result type to be consumed
  */
 public interface Accumulator<V, R> {

@@ -56,13 +56,13 @@ class ListAccumulatorTest {
     }
 
     @Test
-    @DisplayName("Test compatibility with Drainers.drainForEach.")
-    void drainForEach() {
+    @DisplayName("Test compatibility with Drainers.drainIterable.")
+    void drainIterable() {
         List<String> strings = Arrays.asList("abounding", "refuse", "plough");
         List<String> stringsCopy = new ArrayList<>(strings);
 
         strings.forEach(fixture::accumulate);
-        fixture.drain(Drainers.drainForEach(stringsCopy::remove));
+        fixture.drain(Drainers.drainIterable(stringsCopy::remove));
         Assertions.assertEquals(Collections.emptyList(), stringsCopy, "Each item should have been removed from stringsCopy");
     }
 }
