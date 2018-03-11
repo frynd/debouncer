@@ -1,6 +1,6 @@
 package com.frynd.debouncer.accumulator.impl;
 
-import com.frynd.debouncer.accumulator.Drainers;
+import com.frynd.debouncer.drainer.Drainers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

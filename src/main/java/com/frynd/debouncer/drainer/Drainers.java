@@ -1,5 +1,6 @@
-package com.frynd.debouncer.accumulator;
+package com.frynd.debouncer.drainer;
 
+import com.frynd.debouncer.accumulator.Accumulator;
 import com.frynd.debouncer.accumulator.impl.MapAccumulator;
 
 import java.util.Map;

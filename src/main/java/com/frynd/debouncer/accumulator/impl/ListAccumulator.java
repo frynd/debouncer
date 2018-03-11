@@ -1,7 +1,7 @@
 package com.frynd.debouncer.accumulator.impl;
 
 import com.frynd.debouncer.accumulator.Accumulator;
-import com.frynd.debouncer.accumulator.Drainers;
+import com.frynd.debouncer.drainer.Drainers;
 
 import java.util.ArrayList;
 import java.util.List;
