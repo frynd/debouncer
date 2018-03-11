@@ -11,8 +11,8 @@ A debouncer is made up of three parts.
 ### <a name="accumulators"/> Accumulators
 Accumulators accumulate value types into a result type. 
 
-|Accumulator | Description | Value Type | Result Type | Example Reason|
-|----------- | ----------- | ---------- | ----------- | --------------|
+|Accumulator | Description | Value Type | Result Type | Purpose|
+|----------- | ----------- | ---------- | ----------- | -------|
 |<a name="LatestValueAccumulator"/>`LatestValueAccumulator` | Only keeps the last value accumulated. | `T` | `T` | User is typing, but only need the final value entered.|
 |<a name="ListAccumulator"/>`ListAccumulator` | Keeps a list of value types accumulated | `T` | `List<T>` | Rapid events from an external source. All events need to be shown, but multiple updates would cause flickering.|
 |<a name="MapAccumulator"/>`MapAccumulator` | Keeps a map of value types to sub-accumulators. | `V` | `Map<K, Accumulator<V, R>>`| Rapid events coming in from an external source. Each event has a key that it can be grouped by. The resulting groupings can then be accumulated by one of the other accumulators. (See [Drainers.drainMap](#drainMap))|
@@ -24,7 +24,13 @@ An Accumulator decorator is also included, with the following implementation:
 |<a name="SynchronizedAccumulator"/>`SynchronizedAccumulator` | Used to wrap an accumulator's calls in `synchronized` blocks.|
 
 ### <a name="regulators"/> Regulators
-* Work in progress
+Regulators regulate the flow of events. Requests to consume the accumulator is made, then the regulator determines when to execute the drain.
+
+|Executor | Description | Purpose|
+|-------- | ----------- | -------|
+|<a name="ImmediateRegulator"/>`ImmediateRegulator` | Immediately executes events. | Mostly included for testing purposes.|
+|<a name="CountingRegulator"/>`CountingRegulator` | Waits until a certain number of events have been accumulated, then runs once. | Could be used for buffering a large number of events coming in, but not wanting to get overloaded.|
+|<a name="DelayedRegulator"/>`DelayedRegulator` | Waits a given delay after the first event, or first event after delay, ignores other events. | Rapid events coming in, but want to update on a schedule to avoid flickering.|
 
 ### <a name="consumers"/> Consumers/Drainers
 Consumers use the `java.util.function.Consumer` class. Several convenience methods are included in the `Drainers` utility class.
