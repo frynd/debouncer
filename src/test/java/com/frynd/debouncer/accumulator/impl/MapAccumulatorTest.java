@@ -2,7 +2,7 @@ package com.frynd.debouncer.accumulator.impl;
 
 import com.frynd.debouncer.accumulator.Accumulator;
 import com.frynd.debouncer.drainer.Drainers;
-import com.frynd.debouncer.accumulator.Record;
+import com.frynd.debouncer.test.Record;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

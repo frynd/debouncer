@@ -8,8 +8,44 @@ A debouncer is made up of three parts.
 - [_Regulation_](#regulators) - Regulate the throughput of events.
 - [_Consumption_](#consumers) - Consumption of the events.
 
+Debouncer is built through a builder where each part is supplied.
+
+```java
+package com.frynd.debouncer.examples;
+
+import com.frynd.debouncer.Debouncer;
+import com.frynd.debouncer.accumulator.impl.ListAccumulator;
+import com.frynd.debouncer.regulator.impl.DelayedRegulator;
+
+import java.time.Duration;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class HelloWorld {
+
+    public static void main(String[] args) {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        long delay = Duration.ofSeconds(1).toMillis();
+
+        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
+                .regulating(runnable -> new DelayedRegulator(scheduler, delay, runnable))
+                .draining(numbers -> System.out.println("Accumulated: " + numbers));
+
+        AtomicInteger count = new AtomicInteger(0);
+
+        scheduler.scheduleAtFixedRate(() -> debouncer.accumulate(count.getAndIncrement()), delay / 9,
+                delay / 9, TimeUnit.MILLISECONDS);
+
+    }
+}
+```
+Note: The regulator is supplied through a factory, rather than directly, to allow storage of the runnable to be final.
+
 ### <a name="accumulators"/> Accumulators
 Accumulators accumulate value types into a result type. 
+The result type drives the generic type of the consumer passed as the drainer.
 
 |Accumulator | Description | Value Type | Result Type | Purpose|
 |----------- | ----------- | ---------- | ----------- | -------|
@@ -17,11 +53,13 @@ Accumulators accumulate value types into a result type.
 |<a name="ListAccumulator"/>`ListAccumulator` | Keeps a list of value types accumulated | `T` | `List<T>` | Rapid events from an external source. All events need to be shown, but multiple updates would cause flickering.|
 |<a name="MapAccumulator"/>`MapAccumulator` | Keeps a map of value types to sub-accumulators. | `V` | `Map<K, Accumulator<V, R>>`| Rapid events coming in from an external source. Each event has a key that it can be grouped by. The resulting groupings can then be accumulated by one of the other accumulators. (See [Drainers.drainMap](#drainMap))|
 
-An Accumulator decorator is also included, with the following implementation:
+Accumulator decorators are also included, with the following implementation:
 
 |Decorator | Usage|
 |--------- | -----|
 |<a name="SynchronizedAccumulator"/>`SynchronizedAccumulator` | Used to wrap an accumulator's calls in `synchronized` blocks.|
+|<a name="AccumulatingOn"/>`AccumulatingOn` | Used to put an accumulator's accumulation calls on a separate executor.|
+|<a name="DrainingOn"/>`DrainingOn` | Used to put an accumulator's drain calls on a separate executor.|
 
 ### <a name="regulators"/> Regulators
 Regulators regulate the flow of events. Requests to consume the accumulator is made, then the regulator determines when to execute the drain.
@@ -33,7 +71,9 @@ Regulators regulate the flow of events. Requests to consume the accumulator is m
 |<a name="DelayedRegulator"/>`DelayedRegulator` | Waits a given delay after the first event, or first event after delay, ignores other events. | Rapid events coming in, but want to update on a schedule to avoid flickering.|
 
 ### <a name="consumers"/> Consumers/Drainers
-Consumers use the `java.util.function.Consumer` class. Several convenience methods are included in the `Drainers` utility class.
+Consumers use the `java.util.function.Consumer` class. 
+The consumer's generic type matches to the result type of the accumulator.
+Several convenience methods are included in the `Drainers` utility class.
 
 |`Drainers` Method | Arguments | Purpose|
 |----------------- | --------- | -------|
