@@ -1,4 +1,4 @@
-package com.frynd.debouncer.accumulator;
+package com.frynd.debouncer.test;
 
 import java.util.Objects;
 
