@@ -50,15 +50,16 @@ The result type drives the generic type of the consumer passed as the drainer.
 |Accumulator | Description | Value Type | Result Type | Purpose|
 |----------- | ----------- | ---------- | ----------- | -------|
 |<a name="LatestValueAccumulator"/>`LatestValueAccumulator` | Only keeps the last value accumulated. | `T` | `T` | User is typing, but only need the final value entered.|
-|<a name="ListAccumulator"/>`ListAccumulator` | Keeps a list of value types accumulated | `T` | `List<T>` | Rapid events from an external source. All events need to be shown, but multiple updates would cause flickering.|
-|<a name="CollectionAccumulator"/>`CollectionAccumulator` | Keeps a collection of value types accumulated | `T` | `Collection<T>` | Similar to ListAccumulator, but can use an arbitrary backing collection.|
+|<a name="ListAccumulator"/>`ListAccumulator` | Keeps a list of value types accumulated. | `T` | `List<T>` | Rapid events from an external source. All events need to be shown, but multiple updates would cause flickering.|
+|<a name="BlockingQueueAccumulator"/>`BlockingQueueAccumulator` | Keeps a list of value types accumulated using a `BlockingQueue` as the backing storage. | `T` | `List<T>` | Concurrent version of `ListAccumulator`.|
+|<a name="CollectionAccumulator"/>`CollectionAccumulator` | Keeps a collection of value types accumulated. | `T` | `Collection<T>` | Similar to `ListAccumulator`, but can use an arbitrary backing collection.|
 |<a name="MapAccumulator"/>`MapAccumulator` | Keeps a map of value types to sub-accumulators. | `V` | `Map<K, Accumulator<V, R>>`| Rapid events coming in from an external source. Each event has a key that it can be grouped by. The resulting groupings can then be accumulated by one of the other accumulators. (See [Drainers.drainMap](#drainMap))|
 
 Accumulator decorators are also included, with the following implementation:
 
 |Decorator | Usage|
 |--------- | -----|
-|<a name="SynchronizedAccumulator"/>`SynchronizedAccumulator` | Used to wrap an accumulator's calls in `synchronized` blocks.|
+|<a name="SynchronizedAccumulator"/>`SynchronizedAccumulator` | Used to wrap an accumulator's calls in `synchronized` blocks. Wrapping `ListAccumulator` has similar performance to `BlockingQueueAccumulator`.|
 |<a name="AccumulatingOn"/>`AccumulatingOn` | Used to put an accumulator's accumulation calls on a separate executor.|
 |<a name="DrainingOn"/>`DrainingOn` | Used to put an accumulator's drain calls on a separate executor.|
 

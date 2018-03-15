@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 /**
  * Accumulator that accumulates all items into a provided collection.
+ * <br/>
  * Usage: <pre>{@code
  *     CollectionAccumulator<String, Set<String>> accumulator = new CollectionAccumulator<>(new LinkedHashSet<>());
  *     accumulator.accumulate("a");
@@ -42,7 +43,7 @@ public class CollectionAccumulator<V, C extends Collection<V>> implements Accumu
     }
 
     /**
-     * Add the item to the current result list
+     * Add the item to the current result collection
      *
      * @param item the item to accumulate
      */

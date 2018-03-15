@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 /**
  * Accumulator that accumulates all items into a list until drained.
+ * <br/>
  * Usage: <pre>{@code
  *     ListAccumulator<String> accumulator = new ListAccumulator<>();
  *     accumulator.accumulate("a");

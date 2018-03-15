@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 /**
  * Accumulator that accumulates only the latest item.
+ * <br/>
  * Usage: <pre>{@code
  *     LatestValueAccumulator<String> accumulator = new LatestValueAccumulator<>();
  *     accumulator.accumulate("a");
