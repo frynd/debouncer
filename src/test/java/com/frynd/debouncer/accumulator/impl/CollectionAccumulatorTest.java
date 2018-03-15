@@ -6,46 +6,49 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-class ListAccumulatorTest {
+class CollectionAccumulatorTest {
 
-    private ListAccumulator<String> fixture;
+    private CollectionAccumulator<String, Set<String>> fixture;
 
     @BeforeEach
     void setUp()
     {
-        fixture = new ListAccumulator<>();
+        fixture = new CollectionAccumulator<>(new LinkedHashSet<>());
     }
 
     @Test
     @DisplayName("New accumulator should have empty result.")
     void testInitialization() {
-        fixture.drain(list -> Assertions.assertTrue(list.isEmpty(), "Newly created should be empty."));
+        fixture.drain(col -> Assertions.assertTrue(col.isEmpty(), "Newly created should be empty."));
     }
 
     @Test
-    @DisplayName("List accumulator should accumulate each value in order.")
+    @DisplayName("Collection accumulator should accumulate each value.")
     void accumulate() {
         fixture.accumulate("umbrella");
-        fixture.drain(list -> Assertions.assertIterableEquals(Collections.singletonList("umbrella"), list,
+        fixture.drain(col -> Assertions.assertIterableEquals(Collections.singletonList("umbrella"), col,
                 "Accumulating a single value should result in a single value."));
 
         fixture.accumulate("inconclusive");
+        fixture.accumulate("inconclusive");
         fixture.accumulate("questionable");
-        fixture.drain(list -> Assertions.assertEquals(Arrays.asList("inconclusive", "questionable"), list,
-                "Accumulating multiple values should result in all items in order."));
+        fixture.accumulate("inconclusive");
+        fixture.accumulate("inconclusive");
+        fixture.accumulate("inconclusive");
+        fixture.accumulate("questionable");
+        fixture.accumulate("questionable");
+        fixture.drain(col -> Assertions.assertIterableEquals(Arrays.asList("inconclusive", "questionable"), col,
+                "Accumulating multiple values should result in the values as accumulated by the backing set."));
     }
 
     @Test
-    @DisplayName("List accumulator should reset to empty list.")
+    @DisplayName("Collection accumulator should reset to empty collection.")
     void drain() {
         fixture.accumulate("tenuous");
         fixture.drain(Drainers.noopDrainer());
-        fixture.drain(list -> Assertions.assertTrue(list.isEmpty(), "Freshly drained accumulator should be empty."));
+        fixture.drain(col -> Assertions.assertTrue(col.isEmpty(), "Freshly drained accumulator should be empty."));
     }
 
     @Test

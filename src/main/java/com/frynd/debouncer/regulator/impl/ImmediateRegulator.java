@@ -15,6 +15,7 @@ public class ImmediateRegulator extends AbstractBaseRegulator {
      * the provided {@code action}.
      *
      * @param action the action to be performed each time {@code requestAction} is invoked
+     * @throws NullPointerException if {@code action} is null.
      * @see #requestAction()
      */
     public ImmediateRegulator(Runnable action) {
