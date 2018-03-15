@@ -38,6 +38,8 @@ public class DelayedRegulator extends AbstractBaseRegulator {
      * @param scheduler   the scheduler service to be used for scheduling the delay
      * @param delayMillis the delay amount in milliseconds
      * @param action      the action to be performed after request action is called.
+     * @throws NullPointerException     if {@code action} or {@code scheduler} is null.
+     * @throws IllegalArgumentException if {@code delayMillis} is less than or equal to 0
      * @see DelayedRegulator
      */
     public DelayedRegulator(ScheduledExecutorService scheduler, long delayMillis, Runnable action) {

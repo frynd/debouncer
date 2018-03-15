@@ -15,6 +15,7 @@ public abstract class AbstractBaseRegulator implements Regulator {
      * Create a regulator that stores a runnable action as its action.
      *
      * @param action the action to be stored
+     * @throws NullPointerException if {@code action} is null.
      */
     protected AbstractBaseRegulator(Runnable action) {
         Objects.requireNonNull(action);

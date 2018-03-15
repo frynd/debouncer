@@ -17,6 +17,8 @@ public class CountingRegulator extends AbstractBaseRegulator {
      *
      * @param count  the count of action requests that must be met before running the {@code action}
      * @param action the action to be run each time {@code count} action requests are made
+     * @throws NullPointerException     if {@code action} is null.
+     * @throws IllegalArgumentException if {@code count} is less than or equal to 0
      * @see #requestAction()
      */
     public CountingRegulator(long count, Runnable action) {
