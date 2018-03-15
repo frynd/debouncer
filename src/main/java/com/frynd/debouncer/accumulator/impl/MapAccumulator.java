@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 /**
  * Accumulates values into sub-accumulators grouped by key.
+ * <br/>
  * Usage: <pre>{@code
  *      MapAccumulator<Record, String, Record> latestByUserId = new MapAccumulator<>(
  *        Record::getUserId,
