@@ -6,6 +6,17 @@ import java.util.function.LongUnaryOperator;
 /**
  * Counts the number of requests for action.
  * Each time a certain number of requests is met, runs the stored action immediately.
+ *
+ * Usage: <pre>{@code
+ *   AtomicInteger value = new AtomicInteger(0);
+ *   Regulator regulator = new CountingRegulator(5, () -> value.incrementAndGet());
+ *   regulator.requestAction(); //value is still 0
+ *   regulator.requestAction(); //value is still 0
+ *   regulator.requestAction(); //value is still 0
+ *   regulator.requestAction(); //value is still 0
+ *   regulator.requestAction(); //After fifth invocation, value is now 1
+ * }</pre>
+ *
  */
 public class CountingRegulator extends AbstractBaseRegulator {
     private final AtomicLong requestCount = new AtomicLong(0);

@@ -71,6 +71,7 @@ Regulators regulate the flow of events. Requests to consume the accumulator is m
 |<a name="ImmediateRegulator"/>`ImmediateRegulator` | Immediately executes events. | Mostly included for testing purposes.|
 |<a name="CountingRegulator"/>`CountingRegulator` | Waits until a certain number of events have been accumulated, then runs once. | Could be used for buffering a large number of events coming in, but not wanting to get overloaded.|
 |<a name="DelayedRegulator"/>`DelayedRegulator` | Waits a given delay after the first event, or first event after delay, ignores other events. | Rapid events coming in, but want to update on a schedule to avoid flickering.|
+|<a name="QuiescentRegulator"/>`QuiescentRegulator` | Waits a given delay after the first event, resetting the delay with each event. | User is typing and want to wait a certain delay before making service query.|
 
 ### <a name="consumers"/> Consumers/Drainers
 Consumers use the `java.util.function.Consumer` class. 

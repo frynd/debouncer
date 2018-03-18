@@ -5,6 +5,11 @@ package com.frynd.debouncer.regulator.impl;
  * when {@code requestAction} is invoked. Exceptions
  * thrown during the {@code action} will be passed to
  * the invoker of {@code requestAction}
+ * Usage: <pre>{@code
+ *   AtomicInteger value = new AtomicInteger(0);
+ *   Regulator regulator = new ImmediateRegulator(() -> value.incrementAndGet());
+ *   regulator.requestAction(); //value is now 1
+ * }</pre>
  *
  * @see #requestAction()
  */
