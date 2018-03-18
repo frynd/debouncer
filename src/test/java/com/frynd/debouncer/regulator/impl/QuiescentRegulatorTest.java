@@ -11,7 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class DelayedRegulatorTest {
+class QuiescentRegulatorTest {
+
     private static ScheduledExecutorService scheduler;
 
     @BeforeAll
@@ -20,37 +21,37 @@ class DelayedRegulatorTest {
     }
 
     @Test
-    @DisplayName("DelayedRegulator requires a non-null regulator, a positive delay, and a non-null action.")
+    @DisplayName("QuiescentRegulator requires a non-null regulator, a positive delay, and a non-null action.")
     void constructor() {
         Runnable noop = () -> { /*no-op*/ };
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> new DelayedRegulator(null, 100, noop),
+                () -> new QuiescentRegulator(null, 100, noop),
                 "Cannot create a scheduled regulator from a null scheduler.");
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new DelayedRegulator(scheduler, -1, noop),
+                () -> new QuiescentRegulator(scheduler, -1, noop),
                 "Cannot create a scheduled regulator from a negative delay.");
 
         Assertions.assertThrows(IllegalArgumentException.class,
-                () -> new DelayedRegulator(scheduler, 0, noop),
+                () -> new QuiescentRegulator(scheduler, 0, noop),
                 "Cannot create a scheduled regulator from a zero delay.");
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> new DelayedRegulator(scheduler, 10, null),
+                () -> new QuiescentRegulator(scheduler, 10, null),
                 "Cannot create a scheduled regulator from a null action.");
 
-        new DelayedRegulator(scheduler, 10, noop);
+        new QuiescentRegulator(scheduler, 10, noop);
     }
 
     @Test
-    @DisplayName("DelayedRegulator should delay action by the delay amount and should ignore additional calls in between.")
+    @DisplayName("QuiescentRegulator should delay action by the delay amount and should ignore additional calls in between.")
     void requestAction() {
         AtomicInteger nextNumber = new AtomicInteger(0);
         long delayMillis = 100;
         Duration delay = new Duration(delayMillis, TimeUnit.MILLISECONDS);
 
-        Regulator regulator = new DelayedRegulator(scheduler, delayMillis, nextNumber::incrementAndGet);
+        Regulator regulator = new QuiescentRegulator(scheduler, delayMillis, nextNumber::incrementAndGet);
         Assertions.assertEquals(0, nextNumber.get(), "Nothing should have been run yet.");
 
         regulator.requestAction();
@@ -61,9 +62,11 @@ class DelayedRegulatorTest {
         do {
             regulator.requestAction();
             end = System.currentTimeMillis();
-        } while (end - start < delayMillis * 2.5);
+            Assertions.assertEquals(1, nextNumber.get(), "No new actions should be run while new events keep coming in.");
+        } while (end - start < delayMillis * 3);
 
-        Awaitility.await().between(delay.divide(2), delay.multiply(2)).untilAtomic(nextNumber, IsEqual.equalTo(4));
+        //Once actions stop coming in, should fire after delay.
+        Awaitility.await().between(delay.divide(2), delay.multiply(2)).untilAtomic(nextNumber, IsEqual.equalTo(2));
     }
 
     @AfterAll

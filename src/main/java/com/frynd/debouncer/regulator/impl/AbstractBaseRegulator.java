@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * Abstract convenience class for containing a Runnable as the action for a regulator.
- * Regulators need not extend this class, just a convenient base class.
+ * Regulators need not extend this class, this is just a convenient base class to store and invoke a runnable.
  */
 public abstract class AbstractBaseRegulator implements Regulator {
     private final Runnable action;
