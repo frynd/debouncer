@@ -1,0 +1,33 @@
+.root {
+  primary: #317873;
+  accent: derive(primary, 60%);
+
+  -fx-focus-color: primary;
+  -fx-accent: accent;
+
+  -fx-pref-width: 50em;
+  -fx-pref-height: 37.5em;
+}
+
+.header {
+  -fx-background-color: primary;
+  -fx-text-background-color: ladder(primary , white 49%, black 50%);
+  -fx-padding: 1em;
+}
+
+.header-title {
+  -fx-font-size: 2em;
+}
+
+.header-sub-title {
+  -fx-font-style: italic;
+}
+
+.smokey {
+  -fx-background-color: accent;
+  -fx-opacity: 0.5;
+}
+
+.smokey > *{
+  -fx-opacity: 1.0;
+}

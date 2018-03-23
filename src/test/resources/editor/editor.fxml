@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.layout.AnchorPane?>
+<BorderPane styleClass="root"
+            stylesheets="@editor.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.frynd.debouncer.examples.editor.SimpleEditorDemoController">
+    <top>
+        <VBox styleClass="header">
+            <Label styleClass="header-title" text="Simple Html Editor"/>
+            <Label styleClass="header-sub-title" text="Type to set the body of the html document."/>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.38">
+            <TextArea fx:id="textEntry"/>
+            <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+                <Tab text="Rendered">
+                    <StackPane>
+                        <WebView fx:id="renderer" prefHeight="-1.0" prefWidth="-1.0"/>
+                        <StackPane fx:id="loadingNode" mouseTransparent="true">
+                            <AnchorPane styleClass="smokey"/>
+                            <ProgressIndicator maxHeight="-Infinity" maxWidth="-Infinity"
+                                               prefHeight="32.0" prefWidth="32.0"
+                                               StackPane.alignment="CENTER"/>
+                        </StackPane>
+                    </StackPane>
+                </Tab>
+                <Tab text="Effective Text">
+                    <TextArea fx:id="effectiveText" editable="false"/>
+                </Tab>
+            </TabPane>
+        </SplitPane>
+    </center>
+</BorderPane>
