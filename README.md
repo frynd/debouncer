@@ -11,7 +11,7 @@ A debouncer is made up of three parts.
 Debouncer is built through a builder where each part is supplied.
 
 ```java
-package com.frynd.debouncer.examples;
+package com.frynd.debouncer.examples.hello;
 
 import com.frynd.debouncer.Debouncer;
 import com.frynd.debouncer.accumulator.impl.ListAccumulator;
@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HelloWorld {
+public class HelloWorldDemo {
 
     public static void main(String[] args) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -42,6 +42,8 @@ public class HelloWorld {
 }
 ```
 Note: The regulator is supplied through a factory, rather than directly, to allow storage of the runnable to be final.
+
+More examples are included the test/java/com/frynd/debouncer/examples folder.
 
 ### <a name="accumulators"/> Accumulators
 Accumulators accumulate value types into a result type. 

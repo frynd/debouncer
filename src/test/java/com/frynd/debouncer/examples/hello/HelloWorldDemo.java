@@ -1,4 +1,4 @@
-package com.frynd.debouncer.examples;
+package com.frynd.debouncer.examples.hello;
 
 import com.frynd.debouncer.Debouncer;
 import com.frynd.debouncer.accumulator.impl.ListAccumulator;
@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HelloWorld {
+public class HelloWorldDemo {
 
     public static void main(String[] args) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
