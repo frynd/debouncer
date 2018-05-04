@@ -58,8 +58,8 @@ class DrainersTest {
     @DisplayName("drainMap should drain each accumulator in a map.")
     void drainMap() {
         Map<String, Accumulator<Record, List<Record>>> mapping = new HashMap<>();
-        ListAccumulator<Record> waimarieRecords = new ListAccumulator<>();
-        ListAccumulator<Record> nikauRecords = new ListAccumulator<>();
+        ListAccumulator<Record> waimarieRecords = new ListAccumulator<>(new ArrayList<>());
+        ListAccumulator<Record> nikauRecords = new ListAccumulator<>(new ArrayList<>());
 
         waimarieRecords.accumulate(Record.Records.waimarie0);
         waimarieRecords.accumulate(Record.Records.waimarie1);

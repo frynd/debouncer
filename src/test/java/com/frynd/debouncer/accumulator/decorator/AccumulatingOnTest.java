@@ -8,13 +8,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 class AccumulatingOnTest {
 
     @Test
     @DisplayName("AccumulatingOn requires a non-null accumulator and executor.")
     void constructor() {
         Assertions.assertThrows(NullPointerException.class,
-                () -> new AccumulatingOn<>(new ListAccumulator<String>(), null),
+                () -> new AccumulatingOn<>(new ListAccumulator<String>(new ArrayList<>()), null),
                 "Cannot create accumulator that accumulates on null.");
     }
 

@@ -1,5 +1,6 @@
 package com.frynd.debouncer;
 
+import com.frynd.debouncer.accumulator.impl.LatestValueAccumulator;
 import com.frynd.debouncer.accumulator.impl.ListAccumulator;
 import com.frynd.debouncer.drainer.Drainers;
 import com.frynd.debouncer.regulator.impl.CountingRegulator;
@@ -17,7 +18,7 @@ class DebouncerTest {
     @Test
     @DisplayName("Debouncer builder requires non-null accumulator, regulator, and drainer.")
     void accumulating() {
-        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
+        Debouncer<Integer> debouncer = Debouncer.accumulating(new LatestValueAccumulator<Integer>())
                 .regulating(ImmediateRegulator::new).draining(Drainers.noopDrainer()).build();
         Assertions.assertNotNull(debouncer, "Debounce builder should return non-null.");
 
@@ -26,19 +27,19 @@ class DebouncerTest {
                 "Shouldn't be able to start a debouncer with a null accumulator.");
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> Debouncer.accumulating(new ListAccumulator<Integer>()).accumulatingOn(null),
+                () -> Debouncer.accumulating(new LatestValueAccumulator<Integer>()).accumulatingOn(null),
                 "Shouldn't be able to build a debouncer with a null accumulation executor.");
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> Debouncer.accumulating(new ListAccumulator<Integer>()).drainingOn(null),
+                () -> Debouncer.accumulating(new LatestValueAccumulator<Integer>()).drainingOn(null),
                 "Shouldn't be able to build a debouncer with a null drain executor.");
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> Debouncer.accumulating(new ListAccumulator<Integer>()).regulating(null),
+                () -> Debouncer.accumulating(new LatestValueAccumulator<Integer>()).regulating(null),
                 "Shouldn't be able to build a debouncer with a null regulator.");
 
         Assertions.assertThrows(NullPointerException.class,
-                () -> Debouncer.accumulating(new ListAccumulator<Integer>())
+                () -> Debouncer.accumulating(new LatestValueAccumulator<Integer>())
                         .regulating(ImmediateRegulator::new)
                         .draining(null),
                 "Shouldn't be able to build a debouncer with a null drainer.");
@@ -49,7 +50,7 @@ class DebouncerTest {
     void accumulate() {
         int count = 10;
         List<Integer> numbers = new ArrayList<>(count);
-        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
+        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>(new ArrayList<>()))
                 .regulating(runnable -> new CountingRegulator(count, runnable))
                 .draining(acc -> {
                     numbers.clear();
@@ -78,7 +79,7 @@ class DebouncerTest {
 
         int count = 10;
         List<Integer> numbers = new ArrayList<>(count);
-        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
+        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>(new ArrayList<>()))
                 .accumulatingOn(accumulationExecutor)
                 .drainingOn(drainerExecutor)
                 .regulating(runnable -> new CountingRegulator(count, runnable))

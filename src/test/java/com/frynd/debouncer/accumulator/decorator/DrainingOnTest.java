@@ -2,7 +2,6 @@ package com.frynd.debouncer.accumulator.decorator;
 
 import com.frynd.debouncer.accumulator.Accumulator;
 import com.frynd.debouncer.accumulator.impl.LatestValueAccumulator;
-import com.frynd.debouncer.accumulator.impl.ListAccumulator;
 import com.frynd.debouncer.test.CountingExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +13,7 @@ class DrainingOnTest {
     @DisplayName("DrainingOn requires a non-null accumulator and executor.")
     void constructor() {
         Assertions.assertThrows(NullPointerException.class,
-                () -> new DrainingOn<>(new ListAccumulator<String>(), null),
+                () -> new DrainingOn<>(new LatestValueAccumulator<>(), null),
                 "Cannot create accumulator that accumulates on null.");
     }
 

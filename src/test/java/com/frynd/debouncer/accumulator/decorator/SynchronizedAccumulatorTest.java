@@ -19,7 +19,7 @@ class SynchronizedAccumulatorTest {
 
     @BeforeEach
     void setUp() {
-        fixture = new SynchronizedAccumulator<>(new ListAccumulator<>());
+        fixture = new SynchronizedAccumulator<>(new ListAccumulator<>(new ArrayList<>()));
         service = Executors.newFixedThreadPool(CONCURRENCY);
     }
 

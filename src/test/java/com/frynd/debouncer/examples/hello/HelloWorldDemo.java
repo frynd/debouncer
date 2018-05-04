@@ -5,6 +5,7 @@ import com.frynd.debouncer.accumulator.impl.ListAccumulator;
 import com.frynd.debouncer.regulator.impl.DelayedRegulator;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +17,7 @@ public class HelloWorldDemo {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
         long delay = Duration.ofSeconds(1).toMillis();
 
-        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
+        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>(new ArrayList<>()))
                 .regulating(runnable -> new DelayedRegulator(scheduler, delay, runnable))
                 .draining(numbers -> System.out.println("Accumulated: " + numbers))
                 .build();
