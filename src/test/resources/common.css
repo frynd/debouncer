@@ -1,0 +1,26 @@
+.root {
+  -fx-focus-color: primary;
+  -fx-accent: derive(primary, 60%);
+  -fx-default-button: derive(primary, -10%);
+
+  -fx-pref-width: 50em;
+  -fx-pref-height: 37.5em;
+}
+
+.header {
+  -fx-background-color: primary;
+  -fx-text-background-color: ladder(primary , white 49%, black 50%);
+  -fx-padding: 1em;
+}
+
+.header-title {
+  -fx-font-size: 2em;
+}
+
+.header-sub-title {
+  -fx-font-style: italic;
+}
+
+.button:default {
+  /*-fx-text-fill: ladder(-fx-default-button, white 49%, black 50%);*/
+}

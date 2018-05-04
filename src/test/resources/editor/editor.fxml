@@ -7,11 +7,13 @@
 <?import javafx.scene.web.WebView?>
 <?import javafx.scene.layout.AnchorPane?>
 <BorderPane styleClass="root"
-            stylesheets="@editor.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@/common.css, @editor.css"
+            xmlns="http://javafx.com/javafx/8.0.121"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.frynd.debouncer.examples.editor.SimpleEditorDemoController">
     <top>
         <VBox styleClass="header">
-            <Label styleClass="header-title" text="Simple Html Editor"/>
+            <Label styleClass="header-title" text="Simple Html Editor Demo"/>
             <Label styleClass="header-sub-title" text="Type to set the body of the html document."/>
         </VBox>
     </top>
