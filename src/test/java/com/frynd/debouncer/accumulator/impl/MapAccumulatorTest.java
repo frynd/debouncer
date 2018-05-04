@@ -1,6 +1,5 @@
 package com.frynd.debouncer.accumulator.impl;
 
-import com.frynd.debouncer.accumulator.Accumulator;
 import com.frynd.debouncer.drainer.Drainers;
 import com.frynd.debouncer.test.Record;
 import org.junit.jupiter.api.Assertions;
@@ -8,10 +7,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 class MapAccumulatorTest {
 
@@ -20,7 +20,7 @@ class MapAccumulatorTest {
     @BeforeEach
     void setUp() {
         fixture = new MapAccumulator<>(
-                Record::getName,
+                new HashMap<>(), Record::getName,
                 LatestValueAccumulator::new
         );
     }
@@ -66,9 +66,9 @@ class MapAccumulatorTest {
         fixture.drain(Drainers.noopDrainer());
         fixture.drain(map -> Assertions.assertEquals(1, map.size(), "Freshly drained accumulator should be retain keys."));
         fixture.drain(Drainers.drainMap((user, record) -> {
-                    Assertions.assertEquals(Record.Users.WAIMARIE, user, "Only one key should still be around.");
-                    Assertions.assertNull(record, "Record was already drained.");
-                }));
+            Assertions.assertEquals(Record.Users.WAIMARIE, user, "Only one key should still be around.");
+            Assertions.assertNull(record, "Record was already drained.");
+        }));
     }
 
     @Test
@@ -81,9 +81,9 @@ class MapAccumulatorTest {
     @Test
     @DisplayName("Map accumulator should not be constructed with null params.")
     void testNullConstructorParams() {
-        Assertions.assertThrows(NullPointerException.class, () -> new MapAccumulator<>(null, (Supplier<Accumulator<Object, List<Object>>>) ListAccumulator::new), "Map accumulator should not be created if parameters are null.");
-        Assertions.assertThrows(NullPointerException.class, () -> new MapAccumulator<>(Record::getName, null), "Map accumulator should not be created if parameters are null.");
-        Assertions.assertThrows(NullPointerException.class, () -> new MapAccumulator<>(null, null), "Map accumulator should not be created if parameters are null.");
+        Assertions.assertThrows(NullPointerException.class, () -> new MapAccumulator<>(new HashMap<>(), null, LatestValueAccumulator::new), "Map accumulator should not be created if parameters are null.");
+        Assertions.assertThrows(NullPointerException.class, () -> new MapAccumulator<>(new HashMap<>(), Record::getName, null), "Map accumulator should not be created if parameters are null.");
+        Assertions.assertThrows(NullPointerException.class, () -> new MapAccumulator<>(new HashMap<>(), null, null), "Map accumulator should not be created if parameters are null.");
     }
 
     @Test
@@ -105,8 +105,8 @@ class MapAccumulatorTest {
     @DisplayName("Testing compatibility with Drainers.drainMap for non-unary")
     void drainMapList() {
         MapAccumulator<Record, String, List<Record>> fixture = new MapAccumulator<>(
-                Record::getName,
-                ListAccumulator::new
+                new HashMap<>(), Record::getName,
+                () -> new ListAccumulator<>(new ArrayList<>())
         );
         fixture.accumulate(Record.Records.waimarie0);
         fixture.accumulate(Record.Records.nikau0);

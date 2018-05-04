@@ -18,7 +18,7 @@ class BlockingQueueAccumulatorTest {
 
     @BeforeEach
     void setUp() {
-        fixture = new BlockingQueueAccumulator<>();
+        fixture = new BlockingQueueAccumulator<>(new LinkedBlockingQueue<>());
         service = Executors.newFixedThreadPool(CONCURRENCY);
     }
 

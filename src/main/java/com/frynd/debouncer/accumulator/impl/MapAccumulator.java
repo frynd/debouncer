@@ -3,7 +3,6 @@ package com.frynd.debouncer.accumulator.impl;
 import com.frynd.debouncer.accumulator.Accumulator;
 import com.frynd.debouncer.drainer.Drainers;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -16,6 +15,7 @@ import java.util.function.Supplier;
  * <br/>
  * Usage: <pre>{@code
  *      MapAccumulator<Record, String, Record> latestByUserId = new MapAccumulator<>(
+ *        new HashMap<>(),
  *        Record::getUserId,
  *        LatestValueAccumulator::new
  *      );
@@ -34,6 +34,8 @@ import java.util.function.Supplier;
  * performance across map drains. E.g. A list accumulator may wish to maintain the space allocated. However,
  * after each drain, all sub-accumulators are drained.
  * <br/>
+ * <strong>Note:</strong> The backing map should not be modified outside of this class. Behavior
+ * for such modifications are not guaranteed.<br/>
  *
  * @param <V> the value type to be accumulated
  * @param <K> the key type to group values by
@@ -42,7 +44,7 @@ import java.util.function.Supplier;
  */
 public class MapAccumulator<V, K, R> implements Accumulator<V, Map<K, Accumulator<V, R>>> {
 
-    private Map<K, Accumulator<V, R>> map = new HashMap<>();
+    private final Map<K, Accumulator<V, R>> map;
 
     private final Function<? super V, ? extends K> keyFunction;
     private final Supplier<Accumulator<V, R>> accumulatorSupplier;
@@ -51,15 +53,18 @@ public class MapAccumulator<V, K, R> implements Accumulator<V, Map<K, Accumulato
      * Constructs a MapAccumulator that uses the {@code keyFunction} to determine the grouping key for each value, as
      * well as {@code accumulatorSupplier} for instantiating new accumulators when new grouping keys are encountered.
      *
+     * @param backingMap          the backing map to accumulate state into
      * @param keyFunction         the grouping key function
      * @param accumulatorSupplier the supplier of new accumulators. Should always return a new accumulator.
      * @throws NullPointerException if either {@code keyFunction} or {@code accumulatorSupplier} is null.
      */
-    public MapAccumulator(Function<? super V, ? extends K> keyFunction,
+    public MapAccumulator(Map<K, Accumulator<V, R>> backingMap, Function<? super V, ? extends K> keyFunction,
                           Supplier<Accumulator<V, R>> accumulatorSupplier) {
+        Objects.requireNonNull(backingMap);
         Objects.requireNonNull(keyFunction);
         Objects.requireNonNull(accumulatorSupplier);
 
+        this.map = backingMap;
         this.keyFunction = keyFunction;
         this.accumulatorSupplier = accumulatorSupplier;
     }

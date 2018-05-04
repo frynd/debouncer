@@ -125,7 +125,8 @@ public class MonitorDemoController {
         //Debouncer for receiving events from event producer
         producerDebouncer = Debouncer
                 //Accumulate by update name as key, only store the latest value
-                .accumulating(new MapAccumulator<>(Update::getName, LatestValueAccumulator<Update>::new))
+                .accumulating(new MapAccumulator<>(new ConcurrentHashMap<>(),
+                        Update::getName, LatestValueAccumulator<Update>::new))
                 //Setup to only run updates every 100ms.
                 //500ms creates a stutter, but reduces update overhead
                 .regulating(runnable -> new DelayedRegulator(scheduler, 100, runnable))

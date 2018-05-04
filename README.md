@@ -11,25 +11,13 @@ A debouncer is made up of three parts.
 Debouncer is built through a builder where each part is supplied.
 
 ```java
-package com.frynd.debouncer.examples.hello;
-
-import com.frynd.debouncer.Debouncer;
-import com.frynd.debouncer.accumulator.impl.ListAccumulator;
-import com.frynd.debouncer.regulator.impl.DelayedRegulator;
-
-import java.time.Duration;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class HelloWorldDemo {
 
     public static void main(String[] args) {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         long delay = Duration.ofSeconds(1).toMillis();
 
-        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
+        Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>(new ArrayList<>()))
                 .regulating(runnable -> new DelayedRegulator(scheduler, delay, runnable))
                 .draining(numbers -> System.out.println("Accumulated: " + numbers))
                 .build();

@@ -20,7 +20,9 @@ import java.util.function.Consumer;
  *     accumulator.drain(System.out::println); //prints "[a,b,c]";
  * }</pre>
  * <strong>Note:</strong> This implementation is only synchronized in as much as
- * the backing collection is synchronized.
+ * the backing collection is synchronized.<br/>
+ * <strong>Note:</strong> The backing collection should not be modified outside of this class. Behavior
+ * for such modifications is not guaranteed.
  *
  * @param <V> the value type to be accumulated
  * @param <C> the collection type to be accumulated into

@@ -18,7 +18,7 @@ class ListAccumulatorTest {
     @BeforeEach
     void setUp()
     {
-        fixture = new ListAccumulator<>();
+        fixture = new ListAccumulator<>(new ArrayList<>());
     }
 
     @Test

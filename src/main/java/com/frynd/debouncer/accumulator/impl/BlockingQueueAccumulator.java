@@ -5,7 +5,7 @@ import com.frynd.debouncer.accumulator.Accumulator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 
 /**
@@ -23,7 +23,11 @@ import java.util.function.Consumer;
  * @param <T> The type of item accumulated.
  */
 public class BlockingQueueAccumulator<T> implements Accumulator<T, List<T>> {
-    private final LinkedBlockingQueue<T> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<T> queue;
+
+    public BlockingQueueAccumulator(BlockingQueue<T> queue) {
+        this.queue = queue;
+    }
 
     /**
      * Accumulate the item into the current result.
