@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<BorderPane styleClass="root"
+            stylesheets="@/common.css, @monitor.css"
+            xmlns="http://javafx.com/javafx/8.0.121"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.frynd.debouncer.examples.monitor.MonitorDemoController">
+    <top>
+        <VBox styleClass="header" BorderPane.alignment="CENTER">
+            <Label styleClass="header-title" text="Monitor Demo"/>
+            <Label styleClass="header-sub-title" text="Add and remove producers on the Configuration tab."/>
+        </VBox>
+    </top>
+    <center>
+        <TabPane side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Monitor">
+                <SplitPane dividerPositions="0.5">
+                    <BarChart fx:id="chart" animated="false" legendVisible="false" VBox.vgrow="ALWAYS">
+                        <xAxis>
+                            <CategoryAxis animated="false" side="BOTTOM"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis autoRanging="false" side="LEFT"/>
+                        </yAxis>
+                    </BarChart>
+                    <TableView fx:id="eventTable" prefHeight="200" VBox.vgrow="NEVER">
+                        <columns>
+                            <TableColumn text="Producer Name">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="name"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                            <TableColumn text="Last Value">
+                                <cellValueFactory>
+                                    <PropertyValueFactory property="lastValue"/>
+                                </cellValueFactory>
+                            </TableColumn>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                        <placeholder>
+                            <Text text="No events yet."/>
+                        </placeholder>
+                    </TableView>
+                </SplitPane>
+            </Tab>
+            <Tab text="Configuration">
+                <SplitPane>
+                    <GridPane hgap="10.0" vgap="5.0" styleClass="config-pane">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="NEVER"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <Label text="Name"/>
+                        <TextField fx:id="name" promptText="Enter new producer name here..." GridPane.columnIndex="1">
+                            <tooltip>
+                                <Tooltip text="The name of the producer. Must be unique."/>
+                            </tooltip>
+                        </TextField>
+
+                        <CheckBox fx:id="limited" text="Rate limited" selected="true"
+                                  GridPane.rowIndex="2" GridPane.rowSpan="2">
+                            <tooltip>
+                                <Tooltip>
+                                    <text>
+                                        Limit the number of events per second produced. WARNING: Unlimited producers
+                                        can be CPU intensive.
+                                    </text>
+                                </Tooltip>
+                            </tooltip>
+                        </CheckBox>
+                        <Label fx:id="epsLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                               disable="${!limited.selected}"/>
+                        <Slider fx:id="epsSlider" majorTickUnit="100.0" max="1000.0" minorTickCount="0"
+                                showTickLabels="true" showTickMarks="true" snapToTicks="true" value="10"
+                                GridPane.columnIndex="1" GridPane.rowIndex="3" disable="${!limited.selected}">
+                            <tooltip>
+                                <Tooltip text="The number of events the producer will publish every second."/>
+                            </tooltip>
+                        </Slider>
+
+                        <Button fx:id="addProducerButton" defaultButton="true" maxWidth="Infinity"
+                                mnemonicParsing="false" onAction="#addConfiguredProducer"
+                                GridPane.columnSpan="2" GridPane.rowIndex="4">
+                            <tooltip>
+                                <Tooltip text="Add a new producer based on the above settings."/>
+                            </tooltip>
+                        </Button>
+
+                        <Separator GridPane.rowIndex="5" GridPane.columnSpan="2"/>
+
+                        <Button text="Auto Generate Limited Producers"
+                                maxWidth="Infinity" mnemonicParsing="false" onAction="#addManyLimitedProducers"
+                                GridPane.columnSpan="2" GridPane.rowIndex="6">
+                            <tooltip>
+                                <Tooltip text="Add several new rated limited producers."/>
+                            </tooltip>
+                        </Button>
+
+                        <Separator GridPane.rowIndex="7" GridPane.columnSpan="2"/>
+
+                        <Button text="Auto Generate Unlimited Producers"
+                                maxWidth="Infinity" mnemonicParsing="false" onAction="#addManyUnlimitedProducers"
+                                GridPane.columnSpan="2" GridPane.rowIndex="8">
+                            <tooltip>
+                                <Tooltip>
+                                    <text>
+                                        Add several new cpu-bound producers.
+                                        WARNING: This will add significant cpu load.
+                                    </text>
+                                </Tooltip>
+                            </tooltip>
+                        </Button>
+
+                        <Separator GridPane.rowIndex="9" GridPane.columnSpan="2"/>
+
+                        <ToggleButton fx:id="debounceToggle" text="Use Debouncer" selected="true"
+                                      maxWidth="Infinity" mnemonicParsing="false"
+                                      GridPane.columnSpan="2" GridPane.rowIndex="10">
+                            <tooltip>
+                                <Tooltip>
+                                    <text>Enable/Disable debouncing of events.</text>
+                                </Tooltip>
+                            </tooltip>
+                        </ToggleButton>
+                    </GridPane>
+                    <VBox>
+                        <Label text="Active Producers:" VBox.vgrow="NEVER"/>
+                        <ListView fx:id="producerList" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+                </SplitPane>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

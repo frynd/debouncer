@@ -17,12 +17,12 @@ public class SimpleEditorDemo extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(SimpleEditorDemo.class.getResource("/editor/editor.fxml"));
-        primaryStage.setTitle("Simple Editor");
+        primaryStage.setTitle("Simple Editor Demo");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch(args);
+        launch(SimpleEditorDemo.class, args);
     }
 }

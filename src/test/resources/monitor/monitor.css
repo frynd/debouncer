@@ -1,0 +1,8 @@
+.root {
+  primary: #a25e72;
+}
+
+.config-pane {
+  -fx-padding: 1em;
+}
+

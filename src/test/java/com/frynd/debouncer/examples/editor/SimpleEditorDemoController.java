@@ -64,6 +64,7 @@ public class SimpleEditorDemoController {
     private Node loadingNode; // the node to display while loading
     private BooleanProperty rendering = new SimpleBooleanProperty(false); // controls the rendering state
 
+    //invoke by fxml loader
     public void initialize() throws Exception {
         // Load the template to a string.
         String template = buildTemplateString();
