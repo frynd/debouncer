@@ -18,7 +18,7 @@ class DebouncerTest {
     @DisplayName("Debouncer builder requires non-null accumulator, regulator, and drainer.")
     void accumulating() {
         Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
-                .regulating(ImmediateRegulator::new).draining(Drainers.noopDrainer());
+                .regulating(ImmediateRegulator::new).draining(Drainers.noopDrainer()).build();
         Assertions.assertNotNull(debouncer, "Debounce builder should return non-null.");
 
         Assertions.assertThrows(NullPointerException.class,
@@ -54,7 +54,8 @@ class DebouncerTest {
                 .draining(acc -> {
                     numbers.clear();
                     numbers.addAll(acc);
-                });
+                })
+                .build();
 
         Assertions.assertTrue(numbers.isEmpty(), "Numbers should still be empty.");
 
@@ -84,7 +85,8 @@ class DebouncerTest {
                 .draining(acc -> {
                     numbers.clear();
                     numbers.addAll(acc);
-                });
+                })
+                .build();
 
         Assertions.assertTrue(numbers.isEmpty(), "Numbers should still be empty.");
 

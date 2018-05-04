@@ -134,7 +134,8 @@ public class MonitorDemoController {
                     if (update != null) {
                         putData(update.getName(), update.getValue());
                     }
-                }));
+                }))
+                .build();
 
         //Debouncer for checking the name is unique.
         //Technically, this isn't needed as the check is fast enough, but was a nice example
@@ -150,7 +151,8 @@ public class MonitorDemoController {
                 .draining(text -> {
                     checkNameInUse();
                     checkingName.set(false);
-                });
+                })
+                .build();
 
         //Schedule the printing of number of events received per second
         scheduler.scheduleAtFixedRate(() -> {
