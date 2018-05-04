@@ -102,7 +102,8 @@ public class SimpleEditorDemoController {
                 .draining(content -> {
                     renderer.getEngine().loadContent(content); // render the user text in the renderer
                     rendering.set(false); // set the rendering state to finished.
-                });
+                })
+                .build();
     }
 
     private String buildTemplateString() throws URISyntaxException, IOException {

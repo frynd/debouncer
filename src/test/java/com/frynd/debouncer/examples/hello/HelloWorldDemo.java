@@ -18,7 +18,8 @@ public class HelloWorldDemo {
 
         Debouncer<Integer> debouncer = Debouncer.accumulating(new ListAccumulator<Integer>())
                 .regulating(runnable -> new DelayedRegulator(scheduler, delay, runnable))
-                .draining(numbers -> System.out.println("Accumulated: " + numbers));
+                .draining(numbers -> System.out.println("Accumulated: " + numbers))
+                .build();
 
         AtomicInteger count = new AtomicInteger(0);
 

@@ -3,7 +3,9 @@ package com.frynd.debouncer;
 import com.frynd.debouncer.accumulator.Accumulator;
 import com.frynd.debouncer.accumulator.decorator.AccumulatingOn;
 import com.frynd.debouncer.accumulator.decorator.DrainingOn;
+import com.frynd.debouncer.drainer.Drainers;
 import com.frynd.debouncer.regulator.Regulator;
+import com.frynd.debouncer.regulator.impl.ImmediateRegulator;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -17,11 +19,13 @@ import java.util.function.Function;
  * Usage:<pre>{@code
  * Debouncer debouncer = Debouncer.accumulating(accumulator)
  *                                .regulating(regulator)
- *                                .draining(drainer);
+ *                                .draining(drainer)
+ *                                .build();
  * debouncer.accumulate(item);
  * }</pre>
  *
  * @param <V> the value types to be accumulated.
+ * @see #accumulating(Accumulator)
  * @see Accumulator
  * @see Regulator
  * @see Consumer
@@ -48,36 +52,40 @@ public class Debouncer<V> {
 
     /**
      * Start debouncer builder with an accumulator.
+     * If no further configuration is provided, will use an {@link ImmediateRegulator} with a
+     * no-op drainer. It is recommended to replace these.
      *
      * @param accumulator the accumulator the debouncer will use to accumulate events
      * @param <V>         the value type to be accumulated
      * @param <R>         the result type to be consumed later
-     * @return The first phase of the builder, which allows configuration of the accumulator and setting the
-     * regulator factory
+     * @return A builder for a debouncer that will use {@code accumulator} as the base accumulator.
      * @see Accumulator
      * @see DebouncerBuilder#regulating(Function)
+     * @see DebouncerBuilder#draining(Consumer)
      */
     public static <V, R> DebouncerBuilder<V, R> accumulating(Accumulator<V, R> accumulator) {
         Objects.requireNonNull(accumulator);
-        return new DebouncerBuilder<>(accumulator);
+        return new DebouncerBuilder<>(accumulator, ImmediateRegulator::new, Drainers.noopDrainer());
 
     }
 
     /**
-     * Phased builder for Debouncer.
-     * Allows:
-     * - accumulatingOn - decorate current accumulator with executor based accumulation
-     * - drainingOn - decorate current accumulator with executor based draining
-     * - regulating - set regulator and move to next phase.
+     * Builder for Debouncer.
      *
      * @param <V> the value type to be accumulated
      * @param <R> the result type to be consumed later
      */
     public static class DebouncerBuilder<V, R> {
         private final Accumulator<V, R> accumulator;
+        private final Function<Runnable, Regulator> regulatorFactory;
+        private final Consumer<? super R> drainer;
 
-        private DebouncerBuilder(Accumulator<V, R> accumulator) {
+        private DebouncerBuilder(Accumulator<V, R> accumulator,
+                                 Function<Runnable, Regulator> regulatorFactory,
+                                 Consumer<? super R> drainer) {
             this.accumulator = accumulator;
+            this.regulatorFactory = regulatorFactory;
+            this.drainer = drainer;
         }
 
         /**
@@ -93,7 +101,7 @@ public class Debouncer<V> {
          */
         public DebouncerBuilder<V, R> accumulatingOn(Executor executor) {
             Objects.requireNonNull(executor);
-            return new DebouncerBuilder<>(new AccumulatingOn<>(accumulator, executor));
+            return new DebouncerBuilder<>(new AccumulatingOn<>(accumulator, executor), regulatorFactory, drainer);
         }
 
         /**
@@ -110,7 +118,7 @@ public class Debouncer<V> {
          */
         public DebouncerBuilder<V, R> drainingOn(Executor executor) {
             Objects.requireNonNull(executor);
-            return new DebouncerBuilder<>(new DrainingOn<>(accumulator, executor));
+            return new DebouncerBuilder<>(new DrainingOn<>(accumulator, executor), regulatorFactory, drainer);
         }
 
         /**
@@ -125,49 +133,39 @@ public class Debouncer<V> {
          * The factory will only be invoked once.
          *
          * @param regulatorFactory factory method that accepts a runnable and returns a regulator
-         * @return the next phase of the builder which allows setting the drainer
+         * @return A new builder that will invoke the regulator factory to create the regulator
          * @see Regulator
-         * @see DebouncerBuilderRegulation#draining(Consumer)
          */
-        public DebouncerBuilderRegulation<V, R> regulating(Function<Runnable, Regulator> regulatorFactory) {
+        public DebouncerBuilder<V, R> regulating(Function<Runnable, Regulator> regulatorFactory) {
             Objects.requireNonNull(regulatorFactory);
-            return new DebouncerBuilderRegulation<>(this, regulatorFactory);
-        }
-    }
-
-    /**
-     * Final phase of debounce builder.
-     * Allows setting the draining function.
-     *
-     * @param <V> the value type to be accumulated
-     * @param <R> the result type to be consumed later
-     */
-    public static class DebouncerBuilderRegulation<V, R> {
-        private final DebouncerBuilder<V, R> accumulation;
-        private final Function<Runnable, Regulator> regulatorFactory;
-
-        private DebouncerBuilderRegulation(DebouncerBuilder<V, R> accumulation,
-                                           Function<Runnable, Regulator> regulatorFactory) {
-            this.accumulation = accumulation;
-            this.regulatorFactory = regulatorFactory;
+            return new DebouncerBuilder<>(accumulator, regulatorFactory, drainer);
         }
 
         /**
-         * Set the drainer for the debouncer.
-         * The drainer will be invoked with the current result value from the accumulator.
-         * <br/>
-         * <strong>Note:</strong> the accumulator may choose to reuse the value passed to consumer,
-         * so care must be taken when deciding what values should be used outside of the consumer.
+         * Set the drainer action for the debouncer.
+         * This is the recipient of the state accumulated by the {@code accumulator} when the {@code regulator}
+         * determines that it is time.
          *
-         * @param drainer the drainer to be invoked when the regulator runs
-         * @return the debouncer that has been built so far
-         * @see Accumulator#drain(Consumer)
+         * @param drainer the recipient of the accumulated state
+         * @return A new builder that will invoke the {@code drainer} during debounce.
          * @see com.frynd.debouncer.drainer.Drainers
          */
-        public Debouncer<V> draining(Consumer<? super R> drainer) {
+        public DebouncerBuilder<V, R> draining(Consumer<? super R> drainer) {
             Objects.requireNonNull(drainer);
-            Accumulator<V, R> accumulator = accumulation.accumulator;
+            return new DebouncerBuilder<>(accumulator, regulatorFactory, drainer);
+        }
+
+        /**
+         * Build a Debouncer based on this builder.
+         * Will set the runnable on the regulator.
+         *
+         * @return the Debouncer that has been configured by this builder.
+         */
+        public Debouncer<V> build() {
+            //accumulator, drainer, and regulator have all been null checked.
             Regulator regulator = regulatorFactory.apply(() -> accumulator.drain(drainer));
+            Objects.requireNonNull(regulator, "Result of regulator factory was null.");
+
             return new Debouncer<>(accumulator, regulator);
         }
     }
